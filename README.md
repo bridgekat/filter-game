@@ -1,8 +1,34 @@
 # The Filter Game
 
-Note: compared to the Natural Number Game, this game requires more advanced
+[The Filter Game](https://github.com/Biiiilly/filter) is a Year 2 maths student
+group project at Imperial College London, authored by Jiale Miao
+([@Biiiilly](https://github.com/Biiiilly/)), Yichen Feng, Lily Frost,
+Archie Prime and supervised by Prof. Kevin Buzzard
+([@kbuzzard](https://github.com/kbuzzard/)).
+
+This is an (work-in-progress) adaptation of the Filter Game to Lean 4.
+I have just completed porting the solutions, other things not ready yet.
+
+**Note:** compared to the Natural Number Game, this game requires more advanced
 Lean knowledge, including lemma-like tactics (`have` or `suffices`) and the
 understanding of _definitions_ of new types and functions (`structure`, `def`).
+
+## Instruction
+
+There are seven worlds in this game:
+
+- `Filter`: this world contains the basic definition of filters.
+- `Basis`: this world introduces filter bases, and discusses some of its
+  properties.
+- `Order`: given two filters (or filter bases) `f` and `g`, this world talks
+  about the definition of `f ≤ g`.
+- `Principal`: this world discusses "principal filters", or filters that can be
+  generated from a single set.
+- `Semilattice`: this world shows that the `f ≤ g` relation can be made into
+  a "semilattice", by introducing a notion of "greatest lower bound".
+- `Ultrafilter`: this world discusses "ultrafilters", or minimal proper filters.
+- `Topology`: one of the application areas of filters is topology, and we will
+  go through some of the results in this world.
 
 ## General Tips
 

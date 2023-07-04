@@ -11,7 +11,7 @@ variable {α : Type _}
 # Filters in topology
 
 One of the application areas of filters is topology, and we will go through
-some of them in this world.
+some of the results in this world.
 
 First, we review the definition of topological spaces, in Lean...
 -/

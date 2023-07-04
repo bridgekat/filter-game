@@ -25,7 +25,7 @@ open Lean in
 require mathlib from git
   "https://github.com/leanprover-community/mathlib4"
 
-package filter_game {}
+package filtergame {}
 
 @[default_target]
 lean_lib FilterGame {}

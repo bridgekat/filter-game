@@ -29,10 +29,10 @@ upward closed and closed under intersection.
 
 -- First let's define the filters:
 structure Filter (α : Type _) where
-  sets                            : Set (Set α)
-  univ_in_sets                    : Set.univ ∈ sets
-  in_sets_of_subset_in_sets {s t} : s ∈ sets → s ⊆ t → t ∈ sets
-  inter_in_sets {s t}             : s ∈ sets → t ∈ sets → s ∩ t ∈ sets
+  sets                    : Set (Set α)
+  univ_mem_sets           : Set.univ ∈ sets
+  superset_mem_sets {s t} : s ∈ sets → s ⊆ t → t ∈ sets
+  inter_mem_sets {s t}    : s ∈ sets → t ∈ sets → s ∩ t ∈ sets
 
 DefinitionDoc Filter as "Filter"
 "A filter is a collection of subsets which contains the whole set,
@@ -48,31 +48,31 @@ instance : Membership (Set α) (Filter α) :=
 -- (Technical detail)
 -- Make propositional equality from definition, so it can be tagged with `simp`.
 @[simp]
-theorem Filter.in_iff (f : Filter α) (s : Set α) : s ∈ f ↔ s ∈ f.sets :=
-  Iff.rfl
+theorem Filter.mem_def (f : Filter α) (s : Set α) : s ∈ f ↔ s ∈ f.sets := by
+  exact Iff.rfl
 
 -- (Technical detail)
 -- By proof irrelevance, two filters are equal if and only if they contain the same sets.
 @[simp]
-theorem Filter.eq_iff (f g : Filter α) : f = g ↔ f.sets = g.sets := by
+theorem Filter.eq_def (f g : Filter α) : f = g ↔ f.sets = g.sets := by
   apply Iff.intro
   . intro h; rw [h]
   . intro h; cases f; cases g; congr
 
 theorem Filter.ext_iff (f g : Filter α) : f = g ↔ (∀ s, s ∈ f ↔ s ∈ g) := by
-  simp only [eq_iff, in_iff, Set.ext_iff]
+  simp only [eq_def, mem_def, Set.ext_iff]
 
-theorem Filter.ext {f g : Filter α} : (∀ s, s ∈ f ↔ s ∈ g) → f = g :=
-  (ext_iff _ _).2
+theorem Filter.ext {f g : Filter α} : (∀ s, s ∈ f ↔ s ∈ g) → f = g := by
+  exact (ext_iff _ _).mpr
 
 -- The following three lemmas are directly from the definiton of the filters:
-theorem Filter.univ_in (f : Filter α) : Set.univ ∈ f :=
-  Filter.univ_in_sets f
+theorem Filter.univ_mem (f : Filter α) : Set.univ ∈ f := by
+  exact univ_mem_sets f
 
-theorem Filter.in_of_subset_in {f : Filter α} {s t : Set α} (hs : s ∈ f) (h : s ⊆ t) : t ∈ f :=
-  Filter.in_sets_of_subset_in_sets f hs h
+theorem Filter.superset_mem {f : Filter α} {s t : Set α} (hs : s ∈ f) (h : s ⊆ t) : t ∈ f := by
+  exact superset_mem_sets f hs h
 
-theorem Filter.inter_in {f : Filter α} {s t : Set α} (hs : s ∈ f) (ht : t ∈ f) : s ∩ t ∈ f :=
-  Filter.inter_in_sets f hs ht
+theorem Filter.inter_mem {f : Filter α} {s t : Set α} (hs : s ∈ f) (ht : t ∈ f) : s ∩ t ∈ f := by
+  exact inter_mem_sets f hs ht
 
 end FilterGame

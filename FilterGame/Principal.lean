@@ -142,4 +142,11 @@ theorem Filter.principal_empty_eq_bot : 𝓟 ∅ = (⊥ : Filter α) := by
   intros s hs
   exact Set.empty_subset s
 
+--! Bonus level! Hint: `Filter.inter_mem` might be helpful.
+theorem Filter.compl_not_mem {f : Filter α} {s : Set α} (hf : f ≠ ⊥) (h : s ∈ f) : sᶜ ∉ f := by
+  intros h'
+  apply hf
+  rw [← empty_mem_iff_eq_bot, ← Set.compl_inter_self s]
+  exact inter_mem h' h
+
 end FilterGame

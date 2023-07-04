@@ -10,56 +10,66 @@ variable {α : Type _}
 /-!
 # Filters in topology
 
-One of the applications of filters is about topology, and we will go
-through some of them in this level.
+One of the application areas of filters is topology, and we will go through
+some of them in this world.
+
+First, we review the definition of topological spaces, in Lean...
 -/
 
-/- The section below reviews basic knowledge of topological space. This is
-basically from mathlib. Notice there is nothing to do in this section -/
+/--
+A topology on type `α`.
 
-/-- A topology on `α`. -/
+Note that it differs from the textbook definition by not requiring
+the empty set to be open.
+-/
 @[class]
 structure TopologicalSpace (α : Type _) where
-  is_open             : Set α → Prop
-  is_open_univ        : is_open Set.univ
-  is_open_inter {s t} : is_open s → is_open t → is_open (s ∩ t)
-  is_open_sUnion {s}  : (∀ t ∈ s, is_open t) → is_open (⋃₀ s)
+  sets                 : Set (Set α)
+  univ_mem_sets        : Set.univ ∈ sets
+  inter_mem_sets {s t} : s ∈ sets → t ∈ sets → s ∩ t ∈ sets
+  sUnion_mem_sets {c}  : (∀ t ∈ c, t ∈ sets) → ⋃₀ c ∈ sets
 
-/-- A constructor for topologies by specifying the closed sets,
-and showing that they satisfy the appropriate conditions. -/
+/--
+A constructor of topologies by complementing the specified closed sets,
+and showing that their complements satisfy the required conditions.
+-/
 def TopologicalSpace.of_closed
   (τ : Set (Set α))
   (empty_mem : ∅ ∈ τ)
-  (sInter_mem : ∀ s, s ⊆ τ → ⋂₀ s ∈ τ)
   (union_mem : ∀ a ∈ τ, ∀ b ∈ τ, a ∪ b ∈ τ)
+  (sInter_mem : ∀ s, s ⊆ τ → ⋂₀ s ∈ τ)
   : TopologicalSpace α :=
-{ is_open := fun a ↦ aᶜ ∈ τ
-  is_open_univ := by simp_rw [Set.compl_univ, empty_mem]
-  is_open_inter := by
+{ sets := fun a ↦ aᶜ ∈ τ
+  univ_mem_sets := by
+    simp_rw [Set.mem_def, Set.compl_univ]
+    exact empty_mem
+  inter_mem_sets := by
     intros s t hs ht
-    rw [Set.compl_inter]
+    rw [Set.mem_def, Set.compl_inter]
     exact union_mem sᶜ hs tᶜ ht
-  is_open_sUnion := by
+  sUnion_mem_sets := by
     intros s hs
-    rw [Set.compl_sUnion]
+    rw [Set.mem_def, Set.compl_sUnion]
     refine sInter_mem (compl '' s) ?_
     intros z hz
     have ⟨y, hy, hz⟩ := hz
     rw [← hz]
     exact hs y hy }
 
--- Now, coming to the main part of this level:
-
+--! Now we are coming to the main part of this level.
 variable [τ : TopologicalSpace α]
 
--- Firstly, let's define the neighbourhood filters 𝓝 a:
-/-- A set is called a neighborhood of `a` if it contains an open set around `a`. The set of all
-neighborhoods of `a` forms a filter, the neighborhood filter at `a`, denoted as 𝓝 a. -/
+/--
+A set is called a "neighborhood" of `a` if it contains an open set around `a`.
+
+The set of all neighborhoods of `a` forms a filter, the neighborhood filter at
+`a`, written `𝓝 a` (type `\nhds`).
+-/
 def TopologicalSpace.nhds (a : α) : Filter α :=
-{ sets := {s | ∃ t, t ⊆ s ∧ τ.is_open t ∧ a ∈ t},
+{ sets := {s | ∃ t, t ⊆ s ∧ τ.sets t ∧ a ∈ t},
   univ_mem_sets := by
     simp only [exists_prop, Set.mem_iff, Set.subset_univ, true_and]
-    exact ⟨Set.univ, is_open_univ _, Set.mem_univ _⟩
+    exact ⟨Set.univ, univ_mem_sets _, Set.mem_univ _⟩
   superset_mem_sets := by
     intros u v hu huv
     simp only [exists_prop, Set.mem_iff] at hu ⊢
@@ -70,7 +80,7 @@ def TopologicalSpace.nhds (a : α) : Filter α :=
     simp only [exists_prop, Set.mem_iff, Set.subset_inter_iff] at hu hv ⊢
     have ⟨x, hx₁, hx₂, hx₃⟩ := hu
     have ⟨y, hy₁, hy₂, hy₃⟩ := hv
-    refine ⟨x ∩ y, ?_, τ.is_open_inter hx₂ hy₂, Set.mem_sep hx₃ hy₃⟩
+    refine ⟨x ∩ y, ?_, τ.inter_mem_sets hx₂ hy₂, Set.mem_sep hx₃ hy₃⟩
     apply And.intro
     . apply subset_trans _ hx₁
       exact Set.inter_subset_left x y
@@ -80,14 +90,17 @@ def TopologicalSpace.nhds (a : α) : Filter α :=
 notation "𝓝" => TopologicalSpace.nhds
 
 @[simp]
-theorem TopologicalSpace.mem_nhds_def (a : α) (s : Set α) : s ∈ 𝓝 a ↔ (∃ t, t ⊆ s ∧ τ.is_open t ∧ a ∈ t) := by
+theorem TopologicalSpace.mem_nhds_def (a : α) (s : Set α) : s ∈ 𝓝 a ↔ (∃ t, t ⊆ s ∧ τ.sets t ∧ a ∈ t) := by
   exact Iff.rfl
 
--- Try these exercises below:
+--! Try these exercises below:
 
-/-- To show a filter is above the neighborhood filter at `a`, it suffices to show that
-it is above the principal filter of some open set `s` containing `a`. -/
-theorem TopologicalSpace.nhds_le_of_le {f : Filter α} {a : α} {s : Set α} (h : a ∈ s) (ho : τ.is_open s) (hsf : 𝓟 s ≤ f) : 𝓝 a ≤ f := by
+/--
+To show a filter is coarser than the neighborhood filter at `a`, it suffices to
+show that it is coarser than the principal filter of some open set `s`
+containing `a`.
+-/
+theorem TopologicalSpace.nhds_le_of_le {f : Filter α} {a : α} {s : Set α} (h : a ∈ s) (ho : τ.sets s) (hsf : 𝓟 s ≤ f) : 𝓝 a ≤ f := by
   intros u hu
   rw [mem_nhds_def]
   specialize hsf _ hu
@@ -99,12 +112,12 @@ theorem TopologicalSpace.mem_of_mem_nhds {a : α} {s : Set α} (hs : s ∈ 𝓝 
   have ⟨u, hu₁, hu₂, hu₃⟩ := hs
   exact hu₁ hu₃
 
-theorem TopologicalSpace.IsOpen.mem_nhds {a : α} {s : Set α} (hs : τ.is_open s) (ha : a ∈ s) : s ∈ 𝓝 a := by
+theorem TopologicalSpace.OpenSets.mem_nhds {a : α} {s : Set α} (hs : τ.sets s) (ha : a ∈ s) : s ∈ 𝓝 a := by
   rw [mem_nhds_def]
   exact ⟨s, rfl.subset, hs, ha⟩
 
--- Using results above, we can get this:
-theorem TopologicalSpace.IsOpen.mem_nhds_iff {a : α} {s : Set α} (hs : τ.is_open s) : s ∈ 𝓝 a ↔ a ∈ s := by
+--! Using results above, we arrive at this:
+theorem TopologicalSpace.OpenSets.mem_nhds_iff {a : α} {s : Set α} (hs : τ.sets s) : s ∈ 𝓝 a ↔ a ∈ s := by
   apply Iff.intro
   . exact mem_of_mem_nhds
   . exact mem_nhds hs

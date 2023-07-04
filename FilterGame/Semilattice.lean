@@ -7,17 +7,19 @@ namespace FilterGame
 variable {α : Type _}
 
 /-!
-# Challenging Puzzles
+# Semilattice
 
-This level contains some challenging puzzles. Notice that some of the theorems or theorems
-below are used in the previous levels.
+This level contains some challenging puzzles which ultimately lead to the proof
+that the `≤` defined on filters, along with a notion of "greatest lower bounds",
+make an algebraic structure called "semilattice".
+
+Hint: when confronted by a goal like `∃ s, ...`, you have to come up with a
+choice of `s` by yourself. Decide which `s` to use by drawing Venn diagrams.
 -/
 
 /--
-The infimum (greatest lower bound) of two filters is the filter consisting of
-intersections of elements from the two filters.
-
-Hint: decide which sets to use by drawing Venn diagrams.
+The "greatest lower bound", or "infimum", of two filters `f` and `g` is defined
+as the filter consisting of intersections of elements from `f` and `g`.
 -/
 instance : Inf (Filter α) := ⟨fun f g ↦
 { sets := { s | ∃ a ∈ f, ∃ b ∈ g, s = a ∩ b }
@@ -42,17 +44,45 @@ instance : Inf (Filter α) := ⟨fun f g ↦
     rw [hsab, htab]
     ac_rfl }⟩
 
+/-!
+The infimum of `f` and `g` is written as `f ⊓ g`, where `⊓` can be typed into
+Lean using `\inf`.
+-/
+
 theorem Filter.mem_inf_def {f g : Filter α} {s : Set α} : s ∈ f ⊓ g ↔ ∃ a ∈ f, ∃ b ∈ g, s = a ∩ b := by
   exact Iff.rfl
 
 theorem Filter.inter_mem_inf {f g : Filter α} {s t : Set α} (hs : s ∈ f) (ht : t ∈ g) : s ∩ t ∈ f ⊓ g := by
   exact ⟨s, hs, t, ht, rfl⟩
 
-/-
-Now we are coming to another challenging puzzle.
-Hint for the forward direction: 'mem_inf_def'
-Hint for the backward direction: consider 's' as '(t ∪ s) ∩ (tᶜ ∪ s)'
+--! Treasure "semilattice" unlocked!
+instance : SemilatticeInf (Filter α) :=
+{ inf := instInfFilter.inf
+  inf_le_left := by
+    intros f g s hs
+    rw [Filter.mem_inf_def]
+    refine ⟨s, hs, Set.univ, Filter.univ_mem _, ?_⟩
+    rw [Set.inter_univ]
+  inf_le_right := by
+    intros a b s hs
+    rw [Filter.mem_inf_def]
+    refine ⟨Set.univ, Filter.univ_mem _, s, hs, ?_⟩
+    rw [Set.univ_inter]
+  le_inf := by
+    intros f g k hfg hfk s hs
+    have ⟨a, ha, b, hb, hsab⟩ := hs
+    specialize hfg _ ha
+    specialize hfk _ hb
+    rw [hsab]
+    exact Filter.inter_mem hfg hfk }
+
+/-!
+However, on our way to the ultrafilter world still resides a hidden boss...
+
+Hint for the forward direction: use `Filter.mem_inf_def`.
+Hint for the backward direction: consider `s` as `(t ∪ s) ∩ (tᶜ ∪ s)`.
 -/
+
 theorem Filter.mem_inf_principal_iff {f : Filter α} {s t : Set α} : s ∈ f ⊓ 𝓟 t ↔ {x | x ∈ t → x ∈ s} ∈ f := by
   apply Iff.intro
   . intros hs
@@ -76,32 +106,5 @@ theorem Filter.mem_inf_principal_iff {f : Filter α} {s t : Set α} : s ∈ f �
     refine inter_mem_inf h ?_
     rw [mem_principal_def]
     exact Set.subset_union_left _ _
-
--- Hint: 'filter.inter_mem' might be helpful.
-theorem Filter.compl_not_mem {f : Filter α} {s : Set α} (hf : f ≠ ⊥) (h : s ∈ f) : sᶜ ∉ f := by
-  intros h'
-  apply hf
-  rw [← empty_mem_iff_eq_bot, ← Set.compl_inter_self s]
-  exact inter_mem h' h
-
-instance : SemilatticeInf (Filter α) :=
-{ inf := instInfFilter.inf
-  inf_le_left := by
-    intros f g s hs
-    rw [Filter.mem_inf_def]
-    refine ⟨s, hs, Set.univ, Filter.univ_mem _, ?_⟩
-    rw [Set.inter_univ]
-  inf_le_right := by
-    intros a b s hs
-    rw [Filter.mem_inf_def]
-    refine ⟨Set.univ, Filter.univ_mem _, s, hs, ?_⟩
-    rw [Set.univ_inter]
-  le_inf := by
-    intros f g k hfg hfk s hs
-    have ⟨a, ha, b, hb, hsab⟩ := hs
-    specialize hfg _ ha
-    specialize hfk _ hb
-    rw [hsab]
-    exact Filter.inter_mem hfg hfk }
 
 end FilterGame

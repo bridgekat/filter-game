@@ -1,6 +1,7 @@
 import Lake
 open Lake DSL
 
+/-
 -- Configuration file copied from NNG4.
 -- See: https://github.com/hhu-adam/NNG4
 
@@ -21,6 +22,7 @@ open Lean in
     if (← IO.getEnv "NODE_ENV") == some "development" then ``LocalGameServer else ``RemoteGameServer
   modifyEnv (fun env => Lake.packageDepAttr.ext.addEntry env gameServerName)
     : Elab.Command.CommandElabM Unit)
+-/
 
 require mathlib from git
   "https://github.com/leanprover-community/mathlib4"

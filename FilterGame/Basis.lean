@@ -1,4 +1,4 @@
-import FilterGame.Basic
+import FilterGame.Filter
 
 set_option linter.unusedVariables false
 set_option autoImplicit false
@@ -6,7 +6,8 @@ set_option autoImplicit false
 namespace FilterGame
 variable {α : Type _}
 
-/-!
+/-! (TODO)
+
 # Filter basis
 
 We define the filter basis in this file.
@@ -26,20 +27,13 @@ structure Basis (α : Type _) where
   sets_nonempty        : ∃ s, s ∈ sets
   inter_mem_sets {s t} : s ∈ sets → t ∈ sets → ∃ u ∈ sets, u ⊆ s ∩ t
 
--- (Technical detail)
--- A filter basis B is a collection of subsets,
--- so clearly we want to do something like U ∈ B.
 instance : Membership (Set α) (Basis α) :=
   ⟨fun s b ↦ s ∈ b.sets⟩
 
--- (Technical detail)
--- Make propositional equality from definition, so it can be tagged with `simp`.
 @[simp]
 theorem Basis.mem_def (b : Basis α) (s : Set α) : s ∈ b ↔ s ∈ b.sets := by
   exact Iff.rfl
 
--- (Technical detail)
--- By proof irrelevance, two filter bases are equal if and only if they contain the same sets.
 @[simp]
 theorem Basis.eq_def (b c : Basis α) : b = c ↔ b.sets = c.sets := by
   apply Iff.intro

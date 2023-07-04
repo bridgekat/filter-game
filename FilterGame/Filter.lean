@@ -9,7 +9,7 @@ variable {α : Type _}
 /-!
 # Filters
 
-We define the filters and some basic properties of the filters in this file.
+In this world, we will define filters and prove some of its basic properties.
 -/
 
 /--
@@ -28,7 +28,7 @@ structure Filter (α : Type _) where
   superset_mem_sets {s t} : s ∈ sets → s ⊆ t → t ∈ sets
   inter_mem_sets {s t}    : s ∈ sets → t ∈ sets → s ∩ t ∈ sets
 
-/-!
+/--
 If we have a filter `f`, it is more convenient to write `s ∈ f` for
 `s ∈ f.sets`. We now define this notation.
 
@@ -58,8 +58,8 @@ definitional and propositional equality is a source of confusion: why don't we
 make everything uniform?
 
 So a common practice is to *manually create propositional equality lemmas*
-(like this `mem_def`) for definitional equalities, and then forget about
-definitional equalities!
+(like this `mem_def`) for definitional equalities, and then use them all along
+-- forget about definitional equalities!
 -/
 @[simp]
 theorem Filter.mem_def (f : Filter α) (s : Set α) : s ∈ f ↔ s ∈ f.sets := by
@@ -85,7 +85,7 @@ theorem Filter.eq_def (f g : Filter α) : f = g ↔ f.sets = g.sets := by
 This is a simple corollary of the above lemmas, `Filter.mem_def` and
 `Filter.eq_def`, and set extensionality, `Set.ext`.
 
-## Tip
+## Tips
 
 This lemma's name begins with `Filter.`, so we can refer to other
 `Filter.`-prefixed lemmas directly in its proof. For example, we may simply
@@ -98,7 +98,7 @@ theorem Filter.ext {f g : Filter α} : (∀ s, s ∈ f ↔ s ∈ g) → f = g :=
   exact (ext_iff _ _).mpr
 
 /-!
-The following three lemmas directly follows from the definiton of the filters:
+These lemmas directly follow from the definiton of the filters:
 -/
 theorem Filter.univ_mem (f : Filter α) : Set.univ ∈ f := by
   exact f.univ_mem_sets

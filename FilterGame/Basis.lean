@@ -96,7 +96,7 @@ This lemma can be used in `rw` to unfold such notations.
 theorem Set.mem_iff (p : α → Prop) (y : α) : y ∈ {x | p x} ↔ p y := by
   exact Set.mem_setOf
 
-/-!
+/--
 Now we prove that the aforementioned construction indeed gives a satisfactory
 filter. We need to prove the three properties of filters:
 -/
@@ -125,6 +125,7 @@ def Basis.as_filter (b : Basis α) : Filter α :=
 /-!
 These lemmas directly follow:
 -/
+
 theorem Basis.mem_as_filter_def (b : Basis α) (s : Set α) : s ∈ b.as_filter ↔ ∃ t ∈ b, t ⊆ s := by
   exact Iff.rfl
 

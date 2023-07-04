@@ -55,11 +55,11 @@ that were *proven to be equal*. You don't need to `rw` for the former!
 However, in Lean 3 you actually *cannot* `rw` for the former, which can be
 annoying if you just want to unfold a definition. Also, the distinction between
 definitional and propositional equality is a source of confusion: why don't we
-make everything uniform?
+treat everything uniformly?
 
 So a common practice is to *manually create propositional equality lemmas*
 (like this `mem_def`) for definitional equalities, and then use them all along
--- forget about definitional equalities!
+-- just forget about definitional equalities!
 -/
 @[simp]
 theorem Filter.mem_def (f : Filter α) (s : Set α) : s ∈ f ↔ s ∈ f.sets := by
@@ -100,6 +100,7 @@ theorem Filter.ext {f g : Filter α} : (∀ s, s ∈ f ↔ s ∈ g) → f = g :=
 /-!
 These lemmas directly follow from the definiton of the filters:
 -/
+
 theorem Filter.univ_mem (f : Filter α) : Set.univ ∈ f := by
   exact f.univ_mem_sets
 

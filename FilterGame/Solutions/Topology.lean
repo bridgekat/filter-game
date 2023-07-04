@@ -1,4 +1,4 @@
-import FilterGame.Ultrafilter
+import FilterGame.Solutions.Ultrafilter
 import Mathlib.Algebra.Support
 
 set_option linter.unusedVariables false
@@ -67,9 +67,25 @@ The set of all neighborhoods of `a` forms a filter, the neighborhood filter at
 -/
 def TopologicalSpace.nhds (a : α) : Filter α :=
 { sets := {s | ∃ t, t ⊆ s ∧ τ.sets t ∧ a ∈ t},
-  univ_mem_sets := by sorry
-  superset_mem_sets := by sorry
-  inter_mem_sets := by sorry }
+  univ_mem_sets := by
+    simp only [exists_prop, Set.mem_iff, Set.subset_univ, true_and]
+    exact ⟨Set.univ, univ_mem_sets _, Set.mem_univ _⟩
+  superset_mem_sets := by
+    intros u v hu huv
+    simp only [exists_prop, Set.mem_iff] at hu ⊢
+    have ⟨t, ht₁, ht₂, ht₃⟩ := hu
+    exact ⟨t, subset_trans ht₁ huv, ht₂, ht₃⟩
+  inter_mem_sets := by
+    intros u v hu hv
+    simp only [exists_prop, Set.mem_iff, Set.subset_inter_iff] at hu hv ⊢
+    have ⟨x, hx₁, hx₂, hx₃⟩ := hu
+    have ⟨y, hy₁, hy₂, hy₃⟩ := hv
+    refine ⟨x ∩ y, ?_, τ.inter_mem_sets hx₂ hy₂, Set.mem_sep hx₃ hy₃⟩
+    apply And.intro
+    . apply subset_trans _ hx₁
+      exact Set.inter_subset_left x y
+    . apply subset_trans _ hy₁
+      exact Set.inter_subset_right x y }
 
 notation "𝓝" => TopologicalSpace.nhds
 
@@ -85,16 +101,25 @@ show that it is coarser than the principal filter of some open set `s`
 containing `a`.
 -/
 theorem TopologicalSpace.nhds_le_of_le {f : Filter α} {a : α} {s : Set α} (h : a ∈ s) (ho : τ.sets s) (hsf : 𝓟 s ≤ f) : 𝓝 a ≤ f := by
-  sorry
+  intros u hu
+  rw [mem_nhds_def]
+  specialize hsf _ hu
+  rw [Filter.mem_principal_def] at hsf
+  exact ⟨s, hsf, ho, h⟩
 
 theorem TopologicalSpace.mem_of_mem_nhds {a : α} {s : Set α} (hs : s ∈ 𝓝 a) : a ∈ s := by
-  sorry
+  rw [mem_nhds_def] at hs
+  have ⟨u, hu₁, hu₂, hu₃⟩ := hs
+  exact hu₁ hu₃
 
 theorem TopologicalSpace.OpenSets.mem_nhds {a : α} {s : Set α} (hs : τ.sets s) (ha : a ∈ s) : s ∈ 𝓝 a := by
-  sorry
+  rw [mem_nhds_def]
+  exact ⟨s, rfl.subset, hs, ha⟩
 
 --! Using results above, we arrive at this:
 theorem TopologicalSpace.OpenSets.mem_nhds_iff {a : α} {s : Set α} (hs : τ.sets s) : s ∈ 𝓝 a ↔ a ∈ s := by
-  sorry
+  apply Iff.intro
+  . exact mem_of_mem_nhds
+  . exact mem_nhds hs
 
 end FilterGame

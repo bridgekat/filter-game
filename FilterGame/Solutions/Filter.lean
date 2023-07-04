@@ -92,10 +92,10 @@ This lemma's name begins with `Filter.`, so we can refer to other
 write `mem_def` for `Filter.mem_def`.
 -/
 theorem Filter.ext_iff (f g : Filter α) : f = g ↔ (∀ s, s ∈ f ↔ s ∈ g) := by
-  sorry
+  simp only [eq_def, mem_def, Set.ext_iff]
 
 theorem Filter.ext {f g : Filter α} : (∀ s, s ∈ f ↔ s ∈ g) → f = g := by
-  sorry
+  exact (ext_iff _ _).mpr
 
 /-!
 These lemmas directly follow from the definiton of the filters:

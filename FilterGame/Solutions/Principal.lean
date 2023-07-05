@@ -75,6 +75,7 @@ or `⊥` (type `\bot`).
 
 Our goal is to prove that they both exist: `⊤ = 𝓟 Set.univ` and `⊥ = 𝓟 ∅`.
 Note that `⊤` only contains the whole set and `⊥` contains every subset.
+(They are the same as the first two examples defined in the initial world!)
 -/
 
 instance : OrderTop (Filter α) :=

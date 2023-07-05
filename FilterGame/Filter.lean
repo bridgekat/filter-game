@@ -1,4 +1,5 @@
 import Mathlib.Data.Set.Basic
+import Mathlib.Data.Set.Finite
 
 set_option linter.unusedVariables false
 set_option autoImplicit false
@@ -109,5 +110,81 @@ theorem Filter.superset_mem {f : Filter α} {s t : Set α} (hs : s ∈ f) (h : s
 
 theorem Filter.inter_mem {f : Filter α} {s t : Set α} (hs : s ∈ f) (ht : t ∈ f) : s ∩ t ∈ f := by
   exact f.inter_mem_sets hs ht
+
+/--
+We will be using "set-builder notations" like `{x : α | p x}` extensively,
+where `p` is some predicate. This denotes a set inside type `α` consisting of
+exactly those elements `x` in `α` satisfying predicate `p`. The annotation
+`: α` can be omitted if the type of `x` can be inferred from context.
+
+This lemma can be used in `rw` to unfold such notations.
+-/
+theorem Set.mem_iff (p : α → Prop) (y : α) : y ∈ {x : α | p x} ↔ p y := by
+  exact Iff.rfl
+
+/-!
+Now let's see some examples of filters. The simplest one contains all subsets.
+
+Hint: Mathlib lemma `Set.mem_univ` says that everything is contained in the
+whole set. You can look it up
+[here](https://leanprover-community.github.io/mathlib4_docs/Mathlib/Data/Set/Basic.html#Set.mem_univ).
+-/
+
+example : Filter α :=
+{ sets := Set.univ
+  univ_mem_sets := by
+    exact Set.mem_univ _
+  superset_mem_sets := by
+    sorry
+  inter_mem_sets := by
+    sorry }
+
+/-!
+The other simple one contains only the whole set.
+
+Hint: `rw` using `Set.mem_iff` to unfold the set-builder notation.
+Mathlib lemmas `Set.univ_subset_iff` and `Set.inter_self` can be useful here.
+-/
+
+example : Filter α :=
+{ sets := {s : Set α | s = Set.univ}
+  univ_mem_sets := by
+    rw [Set.mem_iff]
+  superset_mem_sets := by
+    simp_rw [Set.mem_iff]
+    sorry
+  inter_mem_sets := by
+    sorry }
+
+/-!
+The cofinite filter consists of subsets whose complements are finite.
+
+Hint: `Set.Finite s` is a Mathlib predicate saying that the set `s` is finite.
+You may find some of the related lemmas useful:
+
+- `Set.finite_empty` says the empty set is finite;
+- `Set.Finite.subset` says that the subset of a finite set is finite;
+- `Set.Finite.union` says that the union of two finite sets is finite.
+
+There are also some identities relating to complements, like `tᶜ ⊆ sᶜ ↔ s ⊆ t`.
+To find their Mathlib names, try using the `apply?` tactic in a made-up `example`:
+
+```lean
+example (s t : Set α) : tᶜ ⊆ sᶜ ↔ s ⊆ t := by apply?
+```
+
+Finally, the complement symbol `ᶜ` can be typed via `\compl` (put your mouse
+cursor on it, Lean 4 will tell you this!
+-/
+
+example : Filter α :=
+{ sets := {s : Set α | Set.Finite sᶜ}
+  univ_mem_sets := by
+    rw [Set.mem_iff, Set.compl_univ]
+    sorry
+  superset_mem_sets := by
+    sorry
+  inter_mem_sets := by
+    sorry }
 
 end FilterGame

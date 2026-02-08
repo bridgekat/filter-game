@@ -1,5 +1,5 @@
 import Mathlib.Data.Set.Basic
-import Mathlib.Data.Set.Finite
+import Mathlib.Data.Set.Finite.Basic
 
 set_option linter.unusedVariables false
 set_option autoImplicit false
@@ -24,10 +24,10 @@ We represent it in Lean as a new type, which "packages" the collection of
 subsets, along with all the properties it should have.
 -/
 structure Filter (α : Type _) where
-  sets                    : Set (Set α)
-  univ_mem_sets           : Set.univ ∈ sets
+  sets : Set (Set α)
+  univ_mem_sets : Set.univ ∈ sets
   superset_mem_sets {s t} : s ∈ sets → s ⊆ t → t ∈ sets
-  inter_mem_sets {s t}    : s ∈ sets → t ∈ sets → s ∩ t ∈ sets
+  inter_mem_sets {s t} : s ∈ sets → t ∈ sets → s ∩ t ∈ sets
 
 /--
 If we have a filter `f`, it is more convenient to write `s ∈ f` for
@@ -43,7 +43,7 @@ The typeclass providing `∈` is called `Membership`. Creating an instance of
 `Membership` allows us to use `∈` for filters.
 -/
 instance : Membership (Set α) (Filter α) :=
-  ⟨fun s f ↦ s ∈ f.sets⟩
+  ⟨fun f s ↦ s ∈ f.sets⟩
 
 /--
 The definition of `∈`.
@@ -79,8 +79,8 @@ So if `f.sets` and `g.sets` are equal, we consider `f` and `g` to be equal, too.
 @[simp]
 theorem Filter.eq_def (f g : Filter α) : f = g ↔ f.sets = g.sets := by
   apply Iff.intro
-  . intro h; rw [h]
-  . intro h; cases f; cases g; congr
+  · intro h; rw [h]
+  · intro h; cases f; cases g; congr
 
 /--
 This is a simple corollary of the above lemmas, `Filter.mem_def` and

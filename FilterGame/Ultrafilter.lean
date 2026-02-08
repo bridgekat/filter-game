@@ -20,8 +20,8 @@ We represent it in Lean as a new type, which "packages" the filter itself,
 along with all the additional properties it should have.
 -/
 structure Ultrafilter (α : Type _) where
-  as_filter    : Filter α
-  ne_bot       : as_filter ≠ ⊥
+  as_filter : Filter α
+  ne_bot : as_filter ≠ ⊥
   le_of_le {g} : g ≠ ⊥ → g ≤ as_filter → as_filter ≤ g
 
 /--
@@ -44,7 +44,7 @@ If we have an ultrafilter `f`, it is more convenient to write `s ∈ f` for
 `s ∈ (f : Filter α)` or `s ∈ (f : Filter α).sets`. We now define this notation.
 -/
 instance : Membership (Set α) (Ultrafilter α) :=
-  ⟨fun s f ↦ s ∈ (f : Filter α)⟩
+  ⟨fun f s ↦ s ∈ (f : Filter α)⟩
 
 /--
 No proper filter `g` can be strictly finer than the ultrafilter `f`.
@@ -71,10 +71,11 @@ theorem Ultrafilter.eq_of_le {f g : Ultrafilter α} (h : (f : Filter α) ≤ g) 
   exact coe_injective (g.unique h f.ne_bot)
 
 @[simp]
-theorem Ultrafilter.coe_le_coe_iff_eq {f g : Ultrafilter α} : (f : Filter α) ≤ (g : Filter α) ↔ f = g := by
+theorem Ultrafilter.coe_le_coe_iff_eq {f g : Ultrafilter α} :
+    (f : Filter α) ≤ (g : Filter α) ↔ f = g := by
   apply Iff.intro
-  . exact eq_of_le
-  . intros h; rw [h]
+  · exact eq_of_le
+  · intros h; rw [h]
 
 @[simp]
 theorem Ultrafilter.coe_inj {f g : Ultrafilter α} : (f : Filter α) = g ↔ f = g := by
@@ -94,7 +95,8 @@ The following lemma might be helpful in the proof of the forward direction.
 Hint: the Mathlib lemmas `le_of_inf_eq`, `inf_le_left` and `inf_le_right`,
 applicable on all instances of `SemilatticeInf`, can be useful here.
 -/
-theorem Ultrafilter.le_of_inf_ne_bot {f : Ultrafilter α} {g : Filter α} (hg : ↑f ⊓ g ≠ ⊥) : ↑f ≤ g := by
+theorem Ultrafilter.le_of_inf_ne_bot {f : Ultrafilter α} {g : Filter α} (hg : ↑f ⊓ g ≠ ⊥) :
+    ↑f ≤ g := by
   sorry
 
 /-!

@@ -20,10 +20,10 @@ The so-called "principal filter on a set `s`" is the collection of
 all supersets of `s`.
 -/
 def Filter.principal (s : Set α) : Filter α :=
-{ sets              := {t | s ⊆ t}
-  univ_mem_sets     := by exact Set.subset_univ s
+{ sets := {t | s ⊆ t}
+  univ_mem_sets := by exact Set.subset_univ s
   superset_mem_sets := by intros x y hx; exact subset_trans hx
-  inter_mem_sets    := by intros x y; exact Set.subset_inter }
+  inter_mem_sets := by intros x y; exact Set.subset_inter }
 
 /-!
 For convenience, we denote the principal filter on `s` as `𝓟 s`.
@@ -46,9 +46,9 @@ the sets of `f`.
 -/
 theorem Filter.le_principal_iff (s : Set α) (f : Filter α) : f ≤ 𝓟 s ↔ s ∈ f := by
   apply Iff.intro
-  . intros h
+  · intros h
     exact h _ (mem_principal_self s)
-  . intros h t ht
+  · intros h t ht
     rw [mem_principal_def] at ht
     exact superset_mem h ht
 
@@ -86,8 +86,8 @@ instance : OrderTop (Filter α) :=
     inter_mem_sets    := by intros s t hs ht x; exact Set.mem_inter (hs _) (ht _) }
   le_top := by
     intros f s hs
-    suffices h : s = Set.univ
-    . rw [h]; exact Filter.univ_mem _
+    suffices h : s = Set.univ by
+      rw [h]; exact Filter.univ_mem _
     rw [Set.eq_univ_iff_forall]
     exact hs }
 
@@ -118,13 +118,13 @@ and is therefore the finest (bottom) element.
 -/
 theorem Filter.empty_mem_iff_eq_bot (f : Filter α) : ∅ ∈ f ↔ f = (⊥ : Filter α) := by
   apply Iff.intro
-  . intros h
+  · intros h
     apply ext
     intros s
     apply Iff.intro
-    . intros _; exact True.intro
-    . intros _; exact superset_mem h (Set.empty_subset _)
-  . intros h
+    · intros _; exact True.intro
+    · intros _; exact superset_mem h (Set.empty_subset _)
+  · intros h
     rw [h]
     exact Set.mem_univ _
 

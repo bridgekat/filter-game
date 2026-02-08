@@ -24,8 +24,8 @@ We represent it in Lean as a new type, which "packages" the collection of
 subsets, along with all the properties it should have.
 -/
 structure Basis (α : Type _) where
-  sets                 : Set (Set α)
-  sets_nonempty        : ∃ s, s ∈ sets
+  sets : Set (Set α)
+  sets_nonempty : ∃ s, s ∈ sets
   inter_mem_sets {s t} : s ∈ sets → t ∈ sets → ∃ u ∈ sets, u ⊆ s ∩ t
 
 /--
@@ -33,7 +33,7 @@ If we have a filter basis `b`, it is more convenient to write `s ∈ b` for
 `s ∈ b.sets`. We now define this notation.
 -/
 instance : Membership (Set α) (Basis α) :=
-  ⟨fun s b ↦ s ∈ b.sets⟩
+  ⟨fun b s ↦ s ∈ b.sets⟩
 
 /--
 The definition of `∈`.
@@ -48,8 +48,8 @@ The definition of equality between filter bases.
 @[simp]
 theorem Basis.eq_def (b c : Basis α) : b = c ↔ b.sets = c.sets := by
   apply Iff.intro
-  . intro h; rw [h]
-  . intro h; cases b; cases c; congr
+  · intro h; rw [h]
+  · intro h; cases b; cases c; congr
 
 /--
 This is a simple corollary of the above lemmas, `Basis.mem_def` and
@@ -112,8 +112,8 @@ def Basis.as_filter (b : Basis α) : Filter α :=
     have ⟨w, hw⟩ := Basis.inter_mem_sets b hu.1 hv.1
     have ⟨hwu, hwv⟩ := Set.subset_inter_iff.mp hw.2
     refine ⟨w, hw.1, Set.subset_inter ?_ ?_⟩
-    . exact subset_trans hwu hu.2
-    . exact subset_trans hwv hv.2 }
+    · exact subset_trans hwu hu.2
+    · exact subset_trans hwv hv.2 }
 
 /-!
 These lemmas directly follow:
@@ -135,7 +135,7 @@ theorem Filter.as_basis_as_filter_eq_self (f : Filter α) : f.as_basis.as_filter
   apply Set.ext; intros x
   simp_rw [← mem_def, Basis.mem_as_filter_def, mem_as_basis_def]
   apply Iff.intro
-  . intros hx; have ⟨t, ht⟩ := hx; exact superset_mem ht.1 ht.2
-  . intros hx; exact ⟨x, hx, subset_rfl⟩
+  · intros hx; have ⟨t, ht⟩ := hx; exact superset_mem ht.1 ht.2
+  · intros hx; exact ⟨x, hx, subset_rfl⟩
 
 end FilterGame

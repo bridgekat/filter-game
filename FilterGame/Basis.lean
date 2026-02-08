@@ -24,8 +24,8 @@ We represent it in Lean as a new type, which "packages" the collection of
 subsets, along with all the properties it should have.
 -/
 structure Basis (α : Type _) where
-  sets                 : Set (Set α)
-  sets_nonempty        : ∃ s, s ∈ sets
+  sets : Set (Set α)
+  sets_nonempty : ∃ s, s ∈ sets
   inter_mem_sets {s t} : s ∈ sets → t ∈ sets → ∃ u ∈ sets, u ⊆ s ∩ t
 
 /--
@@ -33,7 +33,7 @@ If we have a filter basis `b`, it is more convenient to write `s ∈ b` for
 `s ∈ b.sets`. We now define this notation.
 -/
 instance : Membership (Set α) (Basis α) :=
-  ⟨fun s b ↦ s ∈ b.sets⟩
+  ⟨fun b s ↦ s ∈ b.sets⟩
 
 /--
 The definition of `∈`.
@@ -48,8 +48,8 @@ The definition of equality between filter bases.
 @[simp]
 theorem Basis.eq_def (b c : Basis α) : b = c ↔ b.sets = c.sets := by
   apply Iff.intro
-  . intro h; rw [h]
-  . intro h; cases b; cases c; congr
+  · intro h; rw [h]
+  · intro h; cases b; cases c; congr
 
 /--
 This is a simple corollary of the above lemmas, `Basis.mem_def` and

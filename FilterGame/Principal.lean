@@ -20,10 +20,10 @@ The so-called "principal filter on a set `s`" is the collection of
 all supersets of `s`.
 -/
 def Filter.principal (s : Set α) : Filter α :=
-{ sets              := {t | s ⊆ t}
-  univ_mem_sets     := by sorry
+{ sets := {t | s ⊆ t}
+  univ_mem_sets := by sorry
   superset_mem_sets := by sorry
-  inter_mem_sets    := by sorry }
+  inter_mem_sets := by sorry }
 
 /-!
 For convenience, we denote the principal filter on `s` as `𝓟 s`.
